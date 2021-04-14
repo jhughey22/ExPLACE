@@ -1,0 +1,12 @@
+#!/bin/bash
+###Jordan Hughey
+###Liu Group
+#PBS -l walltime=10:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -A open
+#PBS -l pmem=10g
+
+#add R module if needed
+
+Rscript ./scripts/ExPLACE_single_tissue.R ${chrom} ${prefix} ${out_dir} ${cis_window} ${alpha} ${n_folds} ${n_train_test_folds} \
+	${expression_RDS} ${geno_file} ${gene_annot_RDS} ${snp_annot_RDS} ${covariates_file} ${gene_snps_RDS}

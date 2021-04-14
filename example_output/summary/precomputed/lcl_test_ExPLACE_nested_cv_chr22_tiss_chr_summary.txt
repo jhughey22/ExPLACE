@@ -1,0 +1,2 @@
+n_samples	chrom	cv_seed	n_genes
+100	22	620125	7

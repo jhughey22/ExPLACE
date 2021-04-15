@@ -17,7 +17,7 @@ To run ExPLACE, you need [R](https://www.r-project.org/) with several packages i
 <!-- Preparing Input -->
 ## ExPLACE Input data
 
-ExPLACE will train models for gene expression prediction.  There are six main inputs that you can specifiy by using a text editor to change inputs in the `ExPLACE_single_tissue_run.sh`.  Some preprocessing will be needed prior to execution to format the following inputs:
+ExPLACE will train models for gene expression prediction.  There are six main inputs that you can specifiy by using a text editor to change inputs in the `ExPLACE_single_tissue_run.sh` wrapper shell script.  Some preprocessing will be needed prior to execution to format the following inputs:
 
 1) expression_RDS - Expression matrix by tissue as a R data object.  Rows are the sample IDs and columns are the ensemble gene ids. Should look as follows:
 
@@ -44,7 +44,7 @@ ExPLACE will train models for gene expression prediction.  There are six main in
 |  22_16051249_T_C_b37   | 22  | 16051249 | 22_16051249_T_C_b37 | T         | C            | rs1  |
 |  22_16051453_A_C_b37   | 22  | 16051453 | 22_16051453_A_C_b37 | A         | C            | rs2  | 
 
-* note rsid can just be NA since we focus on varID
+* note rsid can just be `NA` since we focus on varID
 
 5) covariates_file - covariate data for adjusting expression values.  We use PEER Factors (as described by GTEx), Sex, Top 3 genetic PCs, and Sequencing platform.  Looks like:
 
@@ -58,7 +58,7 @@ ExPLACE will train models for gene expression prediction.  There are six main in
 |  Sex              | 1     | 2     | 2     |
 |  Platform         | 2     | 1     | 1     |
 
-* if there is no covariates file added denote input as `NA`
+* if there is no covariates file added denote input parameter in the `ExPLACE_single_tissue_run.sh` wrapper script as `NA`
 
 6) gene_snps_RDS - This is a R data object that consists of a list where each item in the list is a gene and its contents are all the snps that pair with this gene based off activity and contact information.  We provide snp-gene RDS objects for 13 tissues in the `example_input/snp-gene_pairs/` directory.  We will be creating another repository documenting our analysis for selecting snp-gene pairs using activity and contact evidence soon.
 
@@ -82,7 +82,7 @@ bash ExPLACE_single_tissue_run.sh
 ```
 This should take ~4mins on a 3GHZ computer
 
-The output with model performance statistics is stored in the output/summary folder as lcl_ExPLACE_nested_cv_chr22_model_summaries.txt.  The first 7 fields will look like:
+The output with model performance statistics is stored in the `output/summary` folder as `lcl_ExPLACE_nested_cv_chr22_model_summaries.txt`.  The first 7 fields will look like:
 
 | gene_id            | gene_name | gene_type      | alpha | n_snps_in_window | n_snps_in_model | lambda_min_mse     |
 | :----------------: | --------- | -------------- | ----- | ---------------- | --------------- | ------------------ |
@@ -91,9 +91,9 @@ The output with model performance statistics is stored in the output/summary fol
 
 Full specification of the output fields are documented [here](https://github.com/jhughey22/ExPLACE/tree/main/example_output/output_fields.txt)
 
-We also output the computed weights for snp-gene pairs in the output/weights folder and also covariances in the output/covariances folder
+We also output the computed weights for snps in each gene model in the `output/weights` folder and also covariances in the `output/covariances` folder
 
-Furthermore, precomputed outputs for the example data are in the example_output directories
+Furthermore, precomputed outputs for the example data are in the `example_output` directories
 
 <!-- FUTURE IMPLEMENTATION -->
 ## Future Directions

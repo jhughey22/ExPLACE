@@ -1,0 +1,30 @@
+field_name	description
+gene_id	Ensemble Id as listed in Tissue Transcriptome model
+gene_name	gene name identifier, typically HUGO for a gene
+gene_type	Type of the gene according to Gencode v26
+alpha	The alpha mixing parameter used with the R package glmnet to train the elastic net model. Here, we used 0.5 for every gene.
+n_snps_in_window	The number of cis-SNPs examined in model training
+n_snps_in_model	The number of snps that have non-zero weights, as found by elastic net
+lambda_min_mse	The lambda parameter for elastic-net found to have the minimum average mean square error on the hold out folds during cross validation.
+test_R2_avg	The average coefficient of determination when predicting values of the hold out fold during nested cross validation. R2 is defined as 1 - sum((y_observed-y_predicted)**2) / sum((y_observed-mean(y_observed)**2)
+test_R2-sd	The standard deviation of the coefficient of determination for each of the five hold out folds during nested cross- validation.
+cv_R2_avg	The average coefficient of determination for each of the hold out folds when cross-validation was performed on the entire data set.
+cv_R2_sd	The standard deviation of the coefficient of determination for each of the 10 hold out folds when doing cross- validation on the entire data set.
+in_sample_R2	After an optimal lambda parameter has been chosen, cv.glmnet trains an elastic net model with all of the data provided, i.e. without any hold out folds. Expression is then predicted using this model, and the coefficient of determination is calculated.
+nested_cv_fish_pval	Our first attempt at calculating a p-value during nested cross-validation. We calculated a p-value using a correlation test using on each of the five hold out folds, and combined the five p-values using Fisher's method. Since some models yielded predictions with a variance of 0, we were unable to perform a correlation test, and the p-value we reported for that fold was a random number from the uniform distribution on the interval (0,1), which would be the correct distribution under the assumption of the null hypothesis. Under simulated null results, we still found this method did not produce a uniform p-value distribution, with values under 0.05 and over 0.95 being under-represented. We decided not to use this statistic because it did not quite produce the desired results and the random element involved when there was prior knowledge that a model did not predict well.
+rho_avg	Average correlation between predicted and observed on the hold out folds when doing nested cross-validation
+rho_se	Standard deviation of correlation between predicted and observed on the hold out folds when doing nested cross-validation
+rho_zscore	Transformation of rho_avg into a z-score using Stouffer's Method.
+rho_avg_squared	square of the rho_avg above
+zscore_pval	p-value for rho_zscore
+cv_rho_avg	Average correlation between predicted and observed on the hold out folds when cross-validation was performed on entire dataset
+cv_rho_se	Standard deviation of correlation between predicted and observed on the hold fols when cross-validation was performed on entire dataset
+cv_rho_avg_squared	square of the cv_rho_avg above
+cv_zscore_est	Transformation of cv_rho_avg into a z-score using Stouffer's Method.
+cv_zcore_pval	p-value for cv_zscore_est
+Best_Model	Model that was picked during tuning phase of nested cross-validation
+PrediXcan_avg_cvm	the PrediXcan model's average mean square error on the hold out folds during nested cross validation.
+ABC_avg_cvm	the model that only encorporates acvity and contact signficant snps average mean square error on the hold out folds during nested cross validation.
+p0_avg_cvm	the model that uses a mixture of the 1Mb snps along with activity and contact significant snps but with the penalty factor = 0 for AC signficant snps
+
+

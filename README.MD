@@ -95,7 +95,7 @@ We also output the computed weights for snps in each gene model in the `output/w
 
 Furthermore, precomputed outputs for the example data are in the `example_output` directories
 
-####Running in parallel using PBS scheduler
+#### Running in parallel using PBS scheduler
 
 We highly recommend running ExPLACE on a HPC preferably on a job scheduling software.  We provide a script to run model training in parallel across chromosomes with the `ExPLACE_single_tissue_parallel.sh` shell script.  This script is wrapper that submits a PBS job for each chromosome.  It calls the `/scripts/ExPLACE_single_tissue.pbs` PBS script that has the specific PBS job allocation parameters.  If your cluster utilizes PBS you can run the following on the provided example data
 

@@ -1,10 +1,10 @@
 <!-- ABOUT THE PROJECT -->
 ## ExPLACE
 
-ExPLACE (**Ex**pression **P**rediction **L**evaraging **A**ctivity and **C**ontact **E**vidence) is an integrative method that uses chromatin conformation data and enhancer activity marks to choose the genetic variants used for predicting gene expression.  Ultimately, this tool creates biologically informed gene expression prediction models for transcriptome-wide association studies. 
+ExPLACE (**Ex**pression **P**rediction **L**everaging **A**ctivity and **C**ontact **E**vidence) is an integrative method that uses chromatin conformation data and enhancer activity marks to choose the genetic variants used for predicting gene expression.  Ultimately, this tool creates biologically informed gene expression prediction models for transcriptome-wide association studies. 
 
 <p align="center">
-   <img src="https://github.com/jhughey22/ExPLACE/tree/main/image/single_tissue_ExPLACE.png" width="934" height="166.7">
+   <img src="https://github.com/jhughey22/ExPLACE/raw/main/image/single_tissue_ExPLACE.png" width="934" height="166.7">
 </p>
 
 <!-- GETTING STARTED -->

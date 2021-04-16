@@ -122,7 +122,7 @@ Jordan Hughey - jordanhugheypsu@gmail.com
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 * [Dajiang J. Liu](https://dajiangliu.blog/)
-* Chachrit (Poom) Khunsriraksakul - [@ChachritK](https://twitter.com/ChachritK) - ckhunsr2@gmail.com
+* Chachrit (Poom) Khunsriraksakul - [@ChachritK](https://twitter.com/ChachritK) 
 
 Part of the code is modified from MetaXcan https://github.com/hakyimlab/MetaXcan. We thank the authors for sharing the code.
 

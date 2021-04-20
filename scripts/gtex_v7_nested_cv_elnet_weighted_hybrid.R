@@ -46,6 +46,8 @@ get_cis_genotype_window <- function(gt_df, snp_annot, coords, cis_window) {
     return(NA)
   gt_df <- as.data.frame(gt_df)
   cis_gt <- gt_df %>% dplyr::select(one_of(intersect(snp_info$varID, colnames(gt_df))))
+  if (ncol(cis_gt) == 0)
+    return(NA)
   column_labels <- colnames(cis_gt)
   row_labels <- rownames(cis_gt)
   # Convert cis_gt to a matrix for glmnet
@@ -573,6 +575,9 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     coords <- get_gene_coords(gene_annot, gene)
     cis_gt <- get_cis_genotype(gt_df, snp_annot, coords, cis_window, gene_snps, gene)
     cis_gt_window <- get_cis_genotype_window(gt_df, snp_annot, coords, cis_window)
+
+    #debugging to see if input processed
+    cat("Processed input for gene")
     
     ###testing getting penalty factor vector#####
     

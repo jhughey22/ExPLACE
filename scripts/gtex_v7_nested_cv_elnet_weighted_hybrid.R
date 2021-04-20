@@ -584,7 +584,12 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     # abc_gene_sub <- subset(gene_snps, gene_snps$ENSID == gene)
     # rownames(abc_gene_sub) <- abc_gene_sub$Variant
     snp_info <- snp_annot %>% filter((pos >= (coords[1] - cis_window)) & (pos <= (coords[2] + cis_window)))
-    
+
+    #check snp_info db
+    head(snp_info)
+    #check cis_gt_window
+    View(cis_gt_window[1:10,1:10])    
+
     #if (nrow(abc_gene_sub) == 0) {
     
     if (gene %in% names(gene_snps)) {

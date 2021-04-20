@@ -29,6 +29,8 @@ get_cis_genotype <- function(gt_df, snp_annot, coords, cis_window, gene_snps, ge
   }
   gt_df <- as.data.frame(gt_df)
   cis_gt <- gt_df %>% dplyr::select(one_of(intersect(snp_info$varID, colnames(gt_df))))
+  if (ncol(cis_gt) == 0)
+    return(NA)
   column_labels <- colnames(cis_gt)
   row_labels <- rownames(cis_gt)
   # Convert cis_gt to a matrix for glmnet

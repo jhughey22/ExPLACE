@@ -577,7 +577,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     cis_gt_window <- get_cis_genotype_window(gt_df, snp_annot, coords, cis_window)
 
     #debugging to see if input processed
-    cat("Processed input for gene")
+    cat("Processed input for gene \n")
     
     ###testing getting penalty factor vector#####
     
@@ -586,9 +586,9 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     snp_info <- snp_annot %>% filter((pos >= (coords[1] - cis_window)) & (pos <= (coords[2] + cis_window)))
 
     #check snp_info db
-    head(snp_info)
+    snp_info[1:nrow(snp_info),]
     #check cis_gt_window
-    View(cis_gt_window[1:10,1:10])    
+    cis_gt_window[1:10,1:10]   
 
     #if (nrow(abc_gene_sub) == 0) {
     

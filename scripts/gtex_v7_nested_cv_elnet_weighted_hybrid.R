@@ -586,7 +586,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     snp_info <- snp_annot %>% filter((pos >= (coords[1] - cis_window)) & (pos <= (coords[2] + cis_window)))
 
     #check snp_info db
-    print(snp_info[1:nrow(snp_info),])
+    print(snp_info[1:10,])
     #check cis_gt_window
     print(cis_gt_window[1:10,1:10])   
 

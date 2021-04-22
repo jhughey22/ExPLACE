@@ -664,7 +664,8 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       }
       #best_model <- names(model_comp)[[best_mod_ix]]
       pen_fac <- pen_fac_list[[best_mod_ix]]
-      
+
+      cat(best_model, 'is best model')      
       cat('Training with optimized model \n')
       if (best_model == 'ABC') {
         perf_measures <- nested_cv_elastic_net_perf(cis_gt, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, pen_fac)
@@ -675,6 +676,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       }
       
       #perf_measures <- nested_cv_elastic_net_perf(cis_gt, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, train_test_fold_ids_RDS)
+      print(pen_fac)
       
       R2_avg <- perf_measures$R2_avg
       R2_sd <- perf_measures$R2_sd

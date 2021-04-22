@@ -637,12 +637,18 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
     if (ncol(cis_gt_window) >= 2) {
       expression_vec <- expr_df[,i]
+      cat('expression vector pre adjustment \n')
+      print(expression_vec[1:7])
       cat("Adjusting for Expression \n")
       if(!is.na(covariates_file)) {
         adj_expression <- adjust_for_covariates(expression_vec, covariates_df)
+        cat('yes covariate file \n')
       } else {
         adj_expression <- expression_vec
+        cat('no covariate file \n')
       }
+      cat('expression vector adjusted')
+      print(adj_expression[1:7])
       
       cat("Tuning models for optimizaton \n")
       model_comp <- nested_cv_elastic_net_model_comp(cis_gt, cis_gt_window, adj_expression, n_samples, 

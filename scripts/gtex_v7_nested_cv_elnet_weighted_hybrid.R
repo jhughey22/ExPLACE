@@ -651,7 +651,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       pen_fac <- pen_fac_list[[best_mod_ix]]
       
 
-      cat(best_model %&% 'is best model')      
+      cat(best_model, 'is best model \n')      
       if (best_model == 'ABC') {
         perf_measures <- nested_cv_elastic_net_perf(cis_gt, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, pen_fac)
         #best_model <- 'ABC'

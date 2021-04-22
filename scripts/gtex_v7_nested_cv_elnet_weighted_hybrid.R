@@ -21,16 +21,24 @@ get_gene_coords <- function(gene_annot, gene) {
 
 get_cis_genotype <- function(gt_df, snp_annot, coords, cis_window, gene_snps, gene) {
   if (gene %in% names(gene_snps)) {
+    cat('Gene in AC genes \n')
     snp_info <- snp_annot[which(snp_annot$varID %in% gene_snps[[gene]]), ]
-    if (nrow(snp_info) == 0)
+    if (nrow(snp_info) == 0) {
+      cat('No AC snps for gene \n')
       return(NA)
+    }
+      #return(NA)
   } else {
+    cat('No AC snps for gene \n')
     return(NA)
   }
   gt_df <- as.data.frame(gt_df)
   cis_gt <- gt_df %>% dplyr::select(one_of(intersect(snp_info$varID, colnames(gt_df))))
-  if (ncol(cis_gt) == 0)
+  if (ncol(cis_gt) == 0) {
+    cat('No AC snps for gene \n')
     return(NA)
+  }
+    #return(NA)
   column_labels <- colnames(cis_gt)
   row_labels <- rownames(cis_gt)
   # Convert cis_gt to a matrix for glmnet
@@ -586,12 +594,15 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     snp_info <- snp_annot %>% filter((pos >= (coords[1] - cis_window)) & (pos <= (coords[2] + cis_window)))
 
     #check snp_info db
-    print(snp_info[1:10,])
+    print(snp_info[1:3,])
     #check cis_gt_window
-    print(cis_gt_window[1:10,1:10])   
+    print(cis_gt_window[1:4,1:4])  
+    #check cis_gt
+    print(cis_gt)
 
     #if (nrow(abc_gene_sub) == 0) {
     
+    cat('building penalty factors \n')
     if (gene %in% names(gene_snps)) {
       snp_info$pen_fac_p0 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0, 1)
       snp_info$pen_fac_p10 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.10, 1)
@@ -616,6 +627,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     
     ###end testing#########################
     
+    cat("Checking if genotype dfs are empty \n")
     if ((all(is.na(cis_gt))) & (all(is.na(cis_gt_window)))) {
       # No snps within window for gene.
       model_summary <- c(gene, gene_name, gene_type, alpha, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
@@ -625,12 +637,14 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
     if (ncol(cis_gt_window) >= 2) {
       expression_vec <- expr_df[,i]
+      cat("Adjusting for Expression \n")
       if(!is.na(covariates_file)) {
         adj_expression <- adjust_for_covariates(expression_vec, covariates_df)
       } else {
         adj_expression <- expression_vec
       }
       
+      cat("Tuning models for optimizaton \n")
       model_comp <- nested_cv_elastic_net_model_comp(cis_gt, cis_gt_window, adj_expression, n_samples, 
                                                      n_train_test_folds, n_folds, alpha, pen_fac_list)
       
@@ -641,6 +655,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       cvm_comps <- c(model_comp$prediXcan, model_comp$ABC, model_comp$p0_pen, model_comp$p10_pen, 
                      model_comp$p25_pen, model_comp$p50_pen, model_comp$p75_pen, model_comp$p90_pen)
       best_mod_ix <- which(cvm_comps == min(cvm_comps))
+      cat("Pick best model \n")
       if (length(best_mod_ix) > 1) {
         best_mod_ix <- best_mod_ix[[1]]
         best_model <- names(model_comp)[[best_mod_ix]]
@@ -650,7 +665,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       #best_model <- names(model_comp)[[best_mod_ix]]
       pen_fac <- pen_fac_list[[best_mod_ix]]
       
-      
+      cat('Training with optimized model \n')
       if (best_model == 'ABC') {
         perf_measures <- nested_cv_elastic_net_perf(cis_gt, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, pen_fac)
         #best_model <- 'ABC'

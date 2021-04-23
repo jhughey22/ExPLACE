@@ -67,8 +67,9 @@ get_cis_genotype_window <- function(gt_df, snp_annot, coords, cis_window) {
 
 get_covariates <- function(covariate_file_name, samples) {
   cov_df <- read.table(covariate_file_name, header = TRUE, stringsAsFactors = FALSE, row.names = 1)
-  cov_df_cols <- gsub("GTEX.", "GTEX-", colnames(cov_df))
-  colnames(cov_df) <- cov_df_cols
+  #Line used to keep R from changing colnames
+  #cov_df_cols <- gsub("GTEX.", "GTEX-", colnames(cov_df))
+  #colnames(cov_df) <- cov_df_cols
   cov_df <- cov_df[,samples] %>% t() %>% as.data.frame()
   cov_df
 }
@@ -639,7 +640,14 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       expression_vec <- expr_df[,i]
       cat('expression vector pre adjustment \n')
       print(expression_vec[1:7])
+      cat('Length of expression vec \n')
+      print(length(expression_vec))
       cat("Adjusting for Expression \n")
+      cat('cov df \n')
+      print(covariates_df[1:4,1:4])
+      cat('dimensions of cov df \n')
+      print(dim(covariates_df))
+      
       if(!is.na(covariates_file)) {
         adj_expression <- adjust_for_covariates(expression_vec, covariates_df)
         cat('yes covariate file \n')

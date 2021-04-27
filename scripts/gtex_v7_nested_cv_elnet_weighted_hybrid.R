@@ -26,30 +26,24 @@ get_gene_coords <- function(gene_annot, gene) {
 get_cis_genotype <- function(gt_df, snp_annot, coords, cis_window, gene_snps, gene) {
   #checks if gene is an AC gene
   if (gene %in% names(gene_snps)) {
-    #cat('Gene in AC genes \n')
     #parses snp annotation for AC variants according to gene
     snp_info <- snp_annot[which(snp_annot$varID %in% gene_snps[[gene]]), ]
     if (nrow(snp_info) == 0) {
-      #cat('No AC snps for gene \n')
       return(NA)
     }
-      #return(NA)
   } else {
-    #cat('No AC snps for gene \n')
     return(NA)
   }
   gt_df <- as.data.frame(gt_df)
   #uses above snp annotations of AC snps and intersects with genotype matrix
   cis_gt <- gt_df %>% dplyr::select(one_of(intersect(snp_info$varID, colnames(gt_df))))
   if (ncol(cis_gt) == 0) {
-    #cat('No AC snps for gene \n')
     return(NA)
   }
-    #return(NA)
   column_labels <- colnames(cis_gt)
   row_labels <- rownames(cis_gt)
   # Convert cis_gt to a matrix for glmnet
-  cis_gt <- matrix(as.matrix(cis_gt), ncol=ncol(cis_gt)) # R is such a bad language.
+  cis_gt <- matrix(as.matrix(cis_gt), ncol=ncol(cis_gt)) 
   colnames(cis_gt) <- column_labels
   rownames(cis_gt) <- row_labels
   #returns AC snps genotype matrix
@@ -68,7 +62,7 @@ get_cis_genotype_window <- function(gt_df, snp_annot, coords, cis_window) {
   column_labels <- colnames(cis_gt)
   row_labels <- rownames(cis_gt)
   # Convert cis_gt to a matrix for glmnet
-  cis_gt <- matrix(as.matrix(cis_gt), ncol=ncol(cis_gt)) # R is such a bad language.
+  cis_gt <- matrix(as.matrix(cis_gt), ncol=ncol(cis_gt)) 
   colnames(cis_gt) <- column_labels
   rownames(cis_gt) <- row_labels
   cis_gt
@@ -95,7 +89,6 @@ generate_fold_ids <- function(n_samples, n_folds=10) {
   #train_test_fold_ids_out <- './Whole_Blood_train_test_fold_ids.RDS'
   #saveRDS(train_test_fold_ids, train_test_fold_ids_out)
   
-  #may need to use this to keep fold ids constant between methods
   
   #also do for cv fold ids without nested cv for fitting all data
   #cv_fold_ids <- generate_fold_ids(n_samples, n_folds)
@@ -142,11 +135,11 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
   
   # Outer-loop split into training and test set.
   train_test_fold_ids <- generate_fold_ids(n_samples, n_folds=n_train_test_folds)
+  #If keeping folds same across models
   #train_test_fold_ids <- readRDS(train_test_fold_ids_RDS)
   
   if (!all(is.na(cis_gt))) {
     if (ncol(cis_gt) >= 2) {
-      #test_fold <- 1
       for (test_fold in 1:n_train_test_folds) {
         #train_idxs <- which(train_test_fold_ids != test_fold)
         test_idxs <- which(train_test_fold_ids == test_fold)
@@ -168,32 +161,20 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           # Fit model with training data.
           fit <- cv.glmnet(prediX_xtrain, y_train, nfolds = n_k_folds, alpha = alpha, type.measure='mse', foldid = cv_fold_ids)
           # Get model cvm
-          # best_lam_ind <- which.min(fit$cvm)
-          # fit$cvm[best_lam_ind]},
           
           tune_pred <- predict(fit, prediX_xtune, s = 'lambda.min')
           mean((y_tune - tune_pred)^2)},
           
-          #predict(fit, x_test, s = 'lambda.min')},
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         abc_cvm <- tryCatch({
           # Fit model with training data.
           fit <- cv.glmnet(abc_xtrain, y_train, nfolds = n_k_folds, alpha = alpha, type.measure='mse', foldid = cv_fold_ids)
           # Get model cvm
-          #best_lam_ind <- which.min(fit$cvm)
-          #fit$cvm[best_lam_ind]},
           
           tune_pred <- predict(fit, abc_xtune, s = 'lambda.min')
           mean((y_tune - tune_pred)^2)},
           
-          #fit$cvm[best_lam_ind]},
-          
-          #predict(fit, x_test, s = 'lambda.min')},
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         
@@ -209,12 +190,6 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           tune_pred <- predict(fit, prediX_xtune)
           mean((y_tune - tune_pred)^2)},
           
-          # # Get model cvm
-          # best_lam_ind <- which.min(fit$cvm)
-          # fit$cvm[best_lam_ind]},
-          #predict(fit, x_test, s = 'lambda.min')},
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         
@@ -230,12 +205,6 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           tune_pred <- predict(fit, prediX_xtune)
           mean((y_tune - tune_pred)^2)},
           
-          # # Get model cvm
-          # best_lam_ind <- which.min(fit$cvm)
-          # fit$cvm[best_lam_ind]},
-          #predict(fit, x_test, s = 'lambda.min')},
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         
@@ -251,12 +220,6 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           tune_pred <- predict(fit, prediX_xtune)
           mean((y_tune - tune_pred)^2)},
           
-          # # Get model cvm
-          # best_lam_ind <- which.min(fit$cvm)
-          # fit$cvm[best_lam_ind]},
-          #predict(fit, x_test, s = 'lambda.min')},
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         p50_cvm <- tryCatch({
@@ -271,8 +234,6 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           tune_pred <- predict(fit, prediX_xtune)
           mean((y_tune - tune_pred)^2)},
           
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         p75_cvm <- tryCatch({
@@ -287,8 +248,6 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           tune_pred <- predict(fit, prediX_xtune)
           mean((y_tune - tune_pred)^2)},
           
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         p90_cvm <- tryCatch({
@@ -303,8 +262,6 @@ nested_cv_elastic_net_model_comp <- function(cis_gt, cis_gt_window, y, n_samples
           tune_pred <- predict(fit, prediX_xtune)
           mean((y_tune - tune_pred)^2)},
           
-          # if the elastic-net model did not converge, predict the mean of the y_train (same as all non-intercept coef=0)
-          # error = function(cond) rep(mean(y_train), length(y_test)))
           error = function(cond) 0)
         
         prediX_cvm_folds[test_fold] <- prediX_cvm
@@ -500,16 +457,12 @@ nested_cv_elastic_net_perf <- function(x, y, n_samples, n_train_test_folds, n_k_
 #get covariance of snps in model
 do_covariance <- function(gene_id, cis_gt, rsids, varIDs) {
   model_gt <- cis_gt[,varIDs, drop=FALSE]
-  #colnames(model_gt) <- rsids
   colnames(model_gt) <- varIDs
   geno_cov <- cov(model_gt)
   geno_cov[lower.tri(geno_cov)] <- NA
-  #cov_df <- melt(geno_cov, varnames = c("rsid1", "rsid2"), na.rm = TRUE) %>%
   cov_df <- melt(geno_cov, varnames = c("varID1", "varID2"), na.rm = TRUE) %>%
     mutate(gene=gene_id) %>%
-    #select(GENE=gene, RSID1=rsid1, RSID2=rsid2, VALUE=value) %>%
     dplyr::select(GENE=gene, VARID1=varID1, VARID2=varID2, VALUE=value) %>%
-    #arrange(GENE, RSID1, RSID2)
     arrange(GENE, VARID1, VARID2)
   cov_df
 }
@@ -547,7 +500,6 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
   
   # Subset expression data to only include genes with gene_info
   expr_df <- expr_df[, intersect(colnames(expr_df), rownames(gene_annot))]
-  #expr_df <- expr_df[, intersect(colnames(expr_df), names(gene_snps))]
   
   #get sample numbers
   samples <- rownames(expr_df)
@@ -590,7 +542,6 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
   write(covariance_col, file = covariance_file, ncol = 4, sep = ' ')
   
   # Attempt to build model for each gene----
-  #i <- 22
   cat("Processing Gene \n")
   for (i in 1:n_genes) {
     cat(i, "/", n_genes, "\n")
@@ -601,26 +552,13 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     cis_gt <- get_cis_genotype(gt_df, snp_annot, coords, cis_window, gene_snps, gene)
     cis_gt_window <- get_cis_genotype_window(gt_df, snp_annot, coords, cis_window)
 
-    #debugging to see if input processed
-    #cat("Processed input for gene \n")
     
-    ###testing getting penalty factor vector#####
+    ###getting penalty factor vector#####
     
-    # abc_gene_sub <- subset(gene_snps, gene_snps$ENSID == gene)
-    # rownames(abc_gene_sub) <- abc_gene_sub$Variant
     #limit snp_info to cis_window
     snp_info <- snp_annot %>% filter((pos >= (coords[1] - cis_window)) & (pos <= (coords[2] + cis_window)))
 
-    #check snp_info db
-    #print(snp_info[1:3,])
-    #check cis_gt_window
-    #print(cis_gt_window[1:4,1:4])  
-    #check cis_gt
-    #print(cis_gt)
-
-    #if (nrow(abc_gene_sub) == 0) {
     
-    #cat('building penalty factors \n')
     #building penalty factors for AC snps
     if (gene %in% names(gene_snps)) {
       snp_info$pen_fac_p0 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0, 1)
@@ -629,9 +567,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
       snp_info$pen_fac_p50 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.50, 1)
       snp_info$pen_fac_p75 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.75, 1)
       snp_info$pen_fac_p90 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.90, 1)
-      # snp_info$pen_fac <- 1
     } else {
-      # snp_info$pen_fac <- ifelse(snp_info$varID %in% abc_gene_sub$Variant, abc_gene_sub$abc_inv, 1)
       snp_info$pen_fac_p0 <- 1
       snp_info$pen_fac_p10 <- 1
       snp_info$pen_fac_p25 <- 1
@@ -644,9 +580,7 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
                          'p25' = snp_info$pen_fac_p25, 'p50' = snp_info$pen_fac_p50, 
                          'p75' = snp_info$pen_fac_p75, 'p90' = snp_info$pen_fac_p90)
     
-    ###end testing#########################
     
-    #cat("Checking if genotype dfs are empty \n")
     #Checking if genotype dfs are empty
     if ((all(is.na(cis_gt))) & (all(is.na(cis_gt_window)))) {
       # No snps within window for gene.
@@ -658,62 +592,38 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     #Need at least 2 snps to fit model
     if (ncol(cis_gt_window) >= 2) {
       expression_vec <- expr_df[,i]
-      #cat('expression vector pre adjustment \n')
-      #print(expression_vec[1:7])
-      #cat('Length of expression vec \n')
-      #print(length(expression_vec))
-      #cat("Adjusting for Expression \n")
-      #cat('cov df \n')
-      #print(covariates_df[1:4,1:4])
-      #cat('dimensions of cov df \n')
-      #print(dim(covariates_df))
       #if covariates file exists, adjust expression      
       if(!is.na(covariates_file)) {
         adj_expression <- adjust_for_covariates(expression_vec, covariates_df)
-        #cat('yes covariate file \n')
       } else {
         adj_expression <- expression_vec
-        #cat('no covariate file \n')
       }
-      #cat('expression vector adjusted \n')
-      #print(adj_expression[1:7])
       
-      #cat("Tuning models for optimizaton \n")
       #Comparing models to pick optimized model
       model_comp <- nested_cv_elastic_net_model_comp(cis_gt, cis_gt_window, adj_expression, n_samples, 
                                                      n_train_test_folds, n_folds, alpha, pen_fac_list)
       
-      # list(prediXcan=prediX_cvm_avg, ABC=abc_cvm_avg, zero_pen=zero_cvm_avg, 
-      #      p10_pen=p10_cvm_avg, p25_pen=p25_cvm_avg, p50_pen=p50_cvm_avg)
       
       #Pick best model
       cvm_comps <- c(model_comp$prediXcan, model_comp$ABC, model_comp$p0_pen, model_comp$p10_pen, 
                      model_comp$p25_pen, model_comp$p50_pen, model_comp$p75_pen, model_comp$p90_pen)
       best_mod_ix <- which(cvm_comps == min(cvm_comps))
-      #cat("Pick best model \n")
       if (length(best_mod_ix) > 1) {
         best_mod_ix <- best_mod_ix[[1]]
         best_model <- names(model_comp)[[best_mod_ix]]
       } else {
         best_model <- names(model_comp)[[best_mod_ix]]
       }
-      #best_model <- names(model_comp)[[best_mod_ix]]
       #choose pen factor to use based off best model
       pen_fac <- pen_fac_list[[best_mod_ix]]
 
-      #cat(best_model, 'is best model \n')      
-      #cat('Training with optimized model \n')
       #Train in optimized model
       if (best_model == 'ABC') {
         perf_measures <- nested_cv_elastic_net_perf(cis_gt, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, pen_fac)
-        #best_model <- 'ABC'
       } else {
         perf_measures <- nested_cv_elastic_net_perf(cis_gt_window, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, pen_fac)
-        #best_model <- 'PrediXcan'
       }
       
-      #perf_measures <- nested_cv_elastic_net_perf(cis_gt, adj_expression, n_samples, n_train_test_folds, n_folds, alpha, train_test_fold_ids_RDS)
-      #print(pen_fac)
 
       #model statistics through training above      
       R2_avg <- perf_measures$R2_avg
@@ -756,14 +666,6 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
         cv_pval_folds <- rep(0, n_folds)
         best_lam_ind <- which.min(fit$cvm)
         
-        # for (j in 1:n_folds) {
-        #   fold_idxs <- which(cv_fold_ids == j)
-        #   adj_expr_fold_pred <- fit$fit.preval[fold_idxs, best_lam_ind]
-        #   cv_R2_folds[j] <- calc_R2(adj_expression[fold_idxs], adj_expr_fold_pred)
-        #   cv_corr_folds[j] <- ifelse(sd(adj_expr_fold_pred) != 0, cor(adj_expr_fold_pred, adj_expression[fold_idxs]), 0)
-        #   cv_zscore_folds[j] <- atanh(cv_corr_folds[j])*sqrt(length(adj_expression[fold_idxs]) - 3) # Fisher transformation
-        #   cv_pval_folds[j] <- ifelse(sd(adj_expr_fold_pred) != 0, cor.test(adj_expr_fold_pred, adj_expression[fold_idxs])$p.value, runif(1))
-        # }
         #Getting results on training with all data        
         for (j in 1:n_folds) {
           train_idxs <- which(cv_fold_ids != j)
@@ -793,13 +695,11 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
         cv_zscore_est <- sum(cv_zscore_folds) / sqrt(n_folds)
         cv_zscore_pval <- 2*pnorm(abs(cv_zscore_est), lower.tail = FALSE)
         cv_pval_est <- pchisq(-2 * sum(log(cv_pval_folds)), 2*n_folds, lower.tail = F)
-        
-        #if (fit$nzero[best_lam_ind] > 0) {
-	#if there is a single non-zero weight snp then print outputs
+
+        #check if there are any non-zero weight snps (any significant snps)       
         if (fit$df > 0) {
 
           #Prepare and write weights          
-          #weights <- fit$glmnet.fit$beta[which(fit$glmnet.fit$beta[,best_lam_ind] != 0), best_lam_ind]
           weights_tmp <- as.matrix(fit$beta)
           weights_tmp <- as.data.frame(weights_tmp, stringsAsFactors = F)
           weights_tmp$varID <- rownames(weights_tmp)
@@ -807,8 +707,6 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
                                      stringsAsFactors = F)
           rownames(weights_tmp2) <- rownames(weights_tmp)
           weights <- weights_tmp2[which(weights_tmp2$weights != 0), ]
-          #colnames(weights) <- c('weights', 'varID')
-          #weighted_snps <- names(fit$glmnet.fit$beta[,best_lam_ind])[which(fit$glmnet.fit$beta[,best_lam_ind] != 0)]
           weighted_snps <- rownames(weights_tmp2[which(weights_tmp2$weights !=0), ])
           weighted_snps_info <- snp_annot %>% filter(varID %in% weighted_snps) %>% dplyr::select(rsid, varID, refAllele, effectAllele)
           weighted_snps_info$gene <- gene
@@ -825,14 +723,8 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
                              best_model, model_comp$prediXcan, model_comp$ABC, model_comp$p0_pen, model_comp$p10_pen, 
                              model_comp$p25_pen, model_comp$p50_pen, model_comp$p75_pen, model_comp$p90_pen)
           
-          # model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), fit$nzero[best_lam_ind], fit$lambda[best_lam_ind], R2_avg, R2_sd, cv_R2_avg, cv_R2_sd, training_R2, pval_est,
-          #                    rho_avg, rho_se, rho_zscore, rho_avg_squared, zscore_pval, cv_rho_avg, cv_rho_se, cv_rho_avg_squared, cv_zscore_est, cv_zscore_pval, cv_pval_est, best_model, 
-          #                    model_comp$prediX_cvm_avg, model_comp$abc_cvm_avg)
         } else {
           #No non-zero weight snps in model (no sig snps)
-          # model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), 0, fit$lambda[best_lam_ind], R2_avg, R2_sd,
-          #                    cv_R2_avg, cv_R2_sd, training_R2, pval_est, rho_avg, rho_se, rho_zscore, rho_avg_squared, zscore_pval,
-          #                    cv_rho_avg, cv_rho_se, cv_rho_avg_squared, cv_zscore_est, cv_zscore_pval, cv_pval_est, best_model, model_comp$prediX_cvm_avg, model_comp$abc_cvm_avg)
           model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), 0, fit$lambda, R2_avg, R2_sd,
                              cv_R2_avg, cv_R2_sd, training_R2, pval_est, rho_avg, rho_se, rho_zscore, rho_avg_squared, zscore_pval,
                              cv_rho_avg, cv_rho_se, cv_rho_avg_squared, cv_zscore_est, cv_zscore_pval, cv_pval_est, 
@@ -841,8 +733,6 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
         }
       } else {
         #Less than 2 snps to build model
-        # model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), 0, NA, R2_avg, R2_sd, NA, NA, NA, pval_est, rho_avg, rho_se, rho_zscore, rho_avg_squared, zscore_pval,
-        #                    NA, NA, NA, NA, NA, NA, NA, NA, NA)
         model_summary <- c(gene, gene_name, gene_type, alpha, ncol(cis_gt), 0, NA, R2_avg, R2_sd, NA, NA, NA, pval_est, rho_avg, rho_se, rho_zscore, rho_avg_squared, zscore_pval,
                            NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
       }
@@ -850,36 +740,6 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
     write(model_summary, file = model_summary_file, append = TRUE, ncol = 33, sep = '\t')
   }
 }
-
-# #Set variables to run main function
-# expression_RDS <- '../../../data/intermediate/expression_phenotypes/Brain_Nucleus_accumbens_basal_ganglia.v7.normalized_expression_tr_euro_pca.RDS'
-# geno_file <- '../../../data/intermediate/genotypes/GTEx_V7_genotype_allchrs_Brain_Nucleus_accumbens_basal_ganglia_ids_pca.matrix.chr22.txt'
-# gene_annot_RDS <- '../../../data/intermediate/annotations/gene_annotation/gencode.v26lift37.annotation.gene.only.parsed.RDS'
-# snp_annot_RDS <- '../../../data/intermediate/annotations/snp_annotation/GTEx_V7_snp_annot_final_allchrs.chr22.RDS'
-# train_test_fold_ids_RDS <- '../../../data/intermediate/annotations/snp_annotation/NA_train_test_fold_ids.RDS'
-# all_cv_fold_ids_RDS <- '../../../data/intermediate/annotations/snp_annotation/NA_cv_fold_ids.RDS'
-# covariates_file <- '../../../../../GTEx/GTEx_Analysis_v7_eQTL_covariates/Brain_Nucleus_accumbens_basal_ganglia.v7.covariates.txt'
-# gene_snps_RDS <- '../../../data/intermediate/annotations/gene_annotation/NA_newABC_sig_snplist_1mb_km.RDS'
-# 
-# n_folds<-5
-# n_train_test_folds<-5
-# alpha<-0.5
-# #null_testing<-FALSE
-# cis_window<-1e6
-# chrom<-22
-# prefix <- 'GTEx_NA_test_nested_cv'
-# seed <- 1993
-# out_dir <- '/storage/home/jmh791/group/default/private/jordan/ABC_TWAS/joblogs/weighted_hybrid_Enet_joblogs/NA_newABC_1mb/'
-# # 
-# # 
-# # # main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS, 
-# # #                  chrom, prefix, n_folds, n_train_test_folds,
-# # #                  seed=NA, cis_window, alpha, train_test_fold_ids_RDS, all_cv_fold_ids_RDS)
-# # 
-# # main(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS, chrom, prefix, n_folds, n_train_test_folds, 
-# #      seed, cis_window, alpha, train_test_fold_ids_RDS, all_cv_fold_ids_RDS, out_dir)
-
-
 
 
 

@@ -1,0 +1,15 @@
+#!/bin/bash
+###Jordan Hughey
+###Liu Lab
+#PBS -l walltime=10:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -A open
+#PBS -l pmem=10g
+
+#Here is the PBS script that submits the below Rscript to the job scheduler
+#The PBS parameters above should be scaled according to training data (ie. higher sample size tissues take longer & need more mem)
+
+#add R module if needed for particular cluster
+
+Rscript ./scripts/run_nested_cvenet_function.R ${chrom} ${prefix} ${out_dir} ${cis_window} ${alpha} ${n_folds} ${n_train_test_folds} \
+	${expression_RDS} ${geno_file} ${gene_annot_RDS} ${snp_annot_RDS} ${covariates_file}

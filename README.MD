@@ -106,11 +106,11 @@ bash ExPLACE_single_tissue_parallel.sh
 The input parameters are the same as the `ExPLACE_single_tissue_run.sh` shell script.  The only difference is we are running the jobs using the PBS scheduler and in parallel for each chromosome
 
 <!-- FUTURE IMPLEMENTATION -->
-## Future Directions
+## Extra Resources/ Future Directions
+
+Documentation for using epigonomic and 3D genomic data for snp-gene pair matching [here](https://github.com/jhughey22/AC_snp-gene_pairing)
 
 Coming Soon!:
-
-Documentation for using epigonomic and 3D genomic data for snp-gene pair matching
 
 Implementation of Ens-ExPLACE (ensemble approach that adapts ExPLACE to cross-tissue imputation)
 

@@ -11,7 +11,7 @@ tissue=lymphoblastoid
 
 chrom=22
 echo "running chrom${chrom}"
-prefix=${tiss}_ExPLACE_nested_cv
+prefix=${tiss}_pred_nested_cv
 out_dir=`pwd`  #outputs stored here
 cis_window=1e6	#Window for picking snps in proximity of gene
 alpha=0.5	#Elastic net mixing parameter

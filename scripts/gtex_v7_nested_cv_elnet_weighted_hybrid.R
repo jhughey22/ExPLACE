@@ -576,18 +576,18 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
         snp_info$pen_fac_p75 <- 1
         snp_info$pen_fac_p90 <- 1
       }
+      pen_fac_list <- list('prediXcan' = 0, 'ABC' = 0, 'p0' = snp_info$pen_fac_p0, 'p10' = snp_info$pen_fac_p10, 
+                           'p25' = snp_info$pen_fac_p25, 'p50' = snp_info$pen_fac_p50, 
+                           'p75' = snp_info$pen_fac_p75, 'p90' = snp_info$pen_fac_p90)
     } else {
-      snp_info$pen_fac_p0 <- 1
-      snp_info$pen_fac_p10 <- 1
-      snp_info$pen_fac_p25 <- 1
-      snp_info$pen_fac_p50 <- 1
-      snp_info$pen_fac_p75 <- 1
-      snp_info$pen_fac_p90 <- 1
+      pen_fac_list <- list('prediXcan' = 0, 'ABC' = 0, 'p0' = 1, 'p10' = 1, 
+                           'p25' = 1, 'p50' = 1, 
+                           'p75' = 1, 'p90' = 1)
     }
     
-    pen_fac_list <- list('prediXcan' = 0, 'ABC' = 0, 'p0' = snp_info$pen_fac_p0, 'p10' = snp_info$pen_fac_p10, 
-                         'p25' = snp_info$pen_fac_p25, 'p50' = snp_info$pen_fac_p50, 
-                         'p75' = snp_info$pen_fac_p75, 'p90' = snp_info$pen_fac_p90)
+    # pen_fac_list <- list('prediXcan' = 0, 'ABC' = 0, 'p0' = snp_info$pen_fac_p0, 'p10' = snp_info$pen_fac_p10, 
+    #                      'p25' = snp_info$pen_fac_p25, 'p50' = snp_info$pen_fac_p50, 
+    #                      'p75' = snp_info$pen_fac_p75, 'p90' = snp_info$pen_fac_p90)
     
     
     #Checking if genotype dfs are empty

@@ -560,13 +560,22 @@ main <- function(snp_annot_RDS, gene_annot_RDS, geno_file, expression_RDS,
 
     
     #building penalty factors for AC snps
-    if (gene %in% names(gene_snps)) {
-      snp_info$pen_fac_p0 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0, 1)
-      snp_info$pen_fac_p10 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.10, 1)
-      snp_info$pen_fac_p25 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.25, 1)
-      snp_info$pen_fac_p50 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.50, 1)
-      snp_info$pen_fac_p75 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.75, 1)
-      snp_info$pen_fac_p90 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.90, 1)
+    if (nrow(snp_info) > 0) {
+      if (gene %in% names(gene_snps)) {
+        snp_info$pen_fac_p0 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0, 1)
+        snp_info$pen_fac_p10 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.10, 1)
+        snp_info$pen_fac_p25 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.25, 1)
+        snp_info$pen_fac_p50 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.50, 1)
+        snp_info$pen_fac_p75 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.75, 1)
+        snp_info$pen_fac_p90 <- ifelse(snp_info$varID %in% gene_snps[[gene]], 0.90, 1)
+      } else {
+        snp_info$pen_fac_p0 <- 1
+        snp_info$pen_fac_p10 <- 1
+        snp_info$pen_fac_p25 <- 1
+        snp_info$pen_fac_p50 <- 1
+        snp_info$pen_fac_p75 <- 1
+        snp_info$pen_fac_p90 <- 1
+      }
     } else {
       snp_info$pen_fac_p0 <- 1
       snp_info$pen_fac_p10 <- 1

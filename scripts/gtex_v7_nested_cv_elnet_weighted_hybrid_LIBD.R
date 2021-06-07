@@ -72,8 +72,8 @@ get_cis_genotype_window <- function(gt_df, snp_annot, coords, cis_window) {
 get_covariates <- function(covariate_file_name, samples) {
   cov_df <- read.table(covariate_file_name, header = TRUE, stringsAsFactors = FALSE, row.names = 1)
   #Line used to keep R from changing colnames
-  cov_df_cols <- gsub("GTEX.", "GTEX-", colnames(cov_df))
-  colnames(cov_df) <- cov_df_cols
+  #cov_df_cols <- gsub("GTEX.", "GTEX-", colnames(cov_df))
+  #colnames(cov_df) <- cov_df_cols
   cov_df <- cov_df[,samples] %>% t() %>% as.data.frame()
   cov_df
 }

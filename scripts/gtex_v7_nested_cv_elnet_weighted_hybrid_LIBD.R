@@ -99,7 +99,7 @@ generate_fold_ids <- function(n_samples, n_folds=10) {
 #uses covariates file to adjust expression
 adjust_for_covariates <- function(expression_vec, cov_df) {
   #first adjust covariates just for LIBD set study == 1
-  cov_df_libd <- subset(cov_df, cov_df$Study == 0)
+  cov_df_libd <- subset(cov_df, cov_df$Study == 1)
   cov_df_libd_final <- cov_df_libd[,'Smoking.status.n', drop=FALSE]
   expression_vec_libd_names <- intersect(names(expression_vec), rownames(cov_df_libd))
   expression_vec_libd <- expression_vec[expression_vec_libd_names]

@@ -83,15 +83,13 @@ adjust_for_covariates <- function(expression_vec, cov_df) {
   expression_vec_combined_df <- rbind(expression_vec_gtex_df, expr_resid_libd) 
   
   #now cbind df but match by name
-  combined_df_full <- merge(cov_df, expression_vec_combined_df, by = 0, sort = F)
-  col_order <- c(1, ncol(combined_df_full), 2:(ncol(combined_df_full)-1))
-  combined_df_final <- combined_df_full[, col_order]
-  rownames(combined_df_final) <- combined_df_final$Row.names
-  combined_df_final <- subset(combined_df_final, select = -c(Row.names, Study, Smoking.status.n))
-  colnames(combined_df_final)[[1]] <- 'expression_vec'
+  combined_df_full <- merge(expression_vec_combined_df, cov_df, by = 0)
+  rownames(combined_df_full) <- combined_df_full$Row.names
+  combined_df_full <- subset(combined_df_full, select = -c(Row.names, Study, Smoking.status.n))
+  colnames(combined_df_full)[[1]] <- 'expression_vec'
   
   #combined_df <- cbind(expression_vec, cov_df)
-  expr_resid <- summary(lm(expression_vec ~ ., data=combined_df_final))$residuals
+  expr_resid <- summary(lm(expression_vec ~ ., data=combined_df_full))$residuals
   expr_resid <- scale(expr_resid, center = TRUE, scale = TRUE)
   expr_resid
 }

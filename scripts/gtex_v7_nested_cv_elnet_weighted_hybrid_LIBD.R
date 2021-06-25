@@ -125,7 +125,8 @@ adjust_for_covariates <- function(expression_vec, cov_df) {
   expression_vec_gtex_df <- as.data.frame(expression_vec_gtex)
   colnames(expression_vec_gtex_df) <- 'expression_vec'
   rownames(expression_vec_gtex_df) <- expression_vec_gtex_names
-  expression_vec_combined_df <- rbind(expression_vec_gtex_df, expr_resid_libd_df)
+  #expression_vec_combined_df <- rbind(expression_vec_gtex_df, expr_resid_libd_df)
+  expression_vec_combined_df <- rbind(expr_resid_libd_df, expression_vec_gtex_df)
   
   #now cbind df but match by name
   combined_df_full <- merge(cov_df, expression_vec_combined_df, by = 0, sort = F)

@@ -98,23 +98,35 @@ generate_fold_ids <- function(n_samples, n_folds=10) {
 
 #uses covariates file to adjust expression
 adjust_for_covariates <- function(expression_vec, cov_df) {
-  #first adjust covariates just for LIBD set study == 1
+  
+  #First adjust for total covariates except smoking-status
+  cov_df_r1 <- subset(cov_df, select = -c(Smoking.status.n, Study))
+  combined_df_r1 <- cbind(expression_vec, cov_df_r1)
+  expr_resid_r1 <- summary(lm(expression_vec ~ ., data=combined_df_r1))$residuals
+  #expr_resid_r1_scale <- scale(expr_resid, center = TRUE, scale = TRUE)
+  expr_resid_r1 <- data.frame('expression_vec' = qqnorm(expr_resid_r1, plot.it = F)$x)
+  rownames(expr_resid_r1) <- rownames(cov_df_r1)
+  
+  #now run the adjustment for smoking on top of adjustment in step 1
   cov_df_libd <- subset(cov_df, cov_df$Study == 1)
   cov_df_libd_final <- cov_df_libd[,'Smoking.status.n', drop=FALSE]
-  expression_vec_libd_names <- intersect(names(expression_vec), rownames(cov_df_libd))
-  expression_vec_libd <- expression_vec[expression_vec_libd_names]
+  expression_vec_libd_names <- intersect(rownames(expr_resid_r1), rownames(cov_df_libd))
+  expression_vec_libd <- expr_resid_r1[expression_vec_libd_names, ]
   
   combined_df_libd <- cbind(expression_vec_libd, cov_df_libd_final)
   expr_resid_libd <- summary(lm(expression_vec_libd ~ ., data=combined_df_libd))$residuals
-  expr_resid_libd <- scale(expr_resid_libd, center = TRUE, scale = TRUE)
+  #expr_resid_libd <- scale(expr_resid_libd, center = TRUE, scale = TRUE)
+  expr_resid_libd_df <- data.frame('expression_vec' = qqnorm(expr_resid_libd, plot.it = F)$x)
+  rownames(expr_resid_libd_df) <- rownames(cov_df_libd_final)
   
-  #now add the above adjusted expression vec from LIBD back to GTEx samples and do full adjustment
-  expression_vec_gtex_names <- setdiff(names(expression_vec), rownames(cov_df_libd))
-  expression_vec_gtex <- expression_vec[expression_vec_gtex_names]
+  #now combine new residuals with covariate back to full adjusment
+  expression_vec_gtex_names <- setdiff(rownames(expr_resid_r1), rownames(cov_df_libd))
+  expression_vec_gtex <- expr_resid_r1[expression_vec_gtex_names, ]
   expression_vec_gtex_df <- as.data.frame(expression_vec_gtex)
-  colnames(expression_vec_gtex_df) <- 'V1'
-  expression_vec_combined_df <- rbind(expression_vec_gtex_df, expr_resid_libd) 
-   
+  colnames(expression_vec_gtex_df) <- 'expression_vec'
+  rownames(expression_vec_gtex_df) <- expression_vec_gtex_names
+  expression_vec_combined_df <- rbind(expression_vec_gtex_df, expr_resid_libd_df)
+  
   #now cbind df but match by name
   combined_df_full <- merge(cov_df, expression_vec_combined_df, by = 0, sort = F)
   col_order <- c(1, ncol(combined_df_full), 2:(ncol(combined_df_full)-1))
@@ -123,9 +135,7 @@ adjust_for_covariates <- function(expression_vec, cov_df) {
   combined_df_final <- subset(combined_df_final, select = -c(Row.names, Study, Smoking.status.n))
   colnames(combined_df_final)[[1]] <- 'expression_vec'
   
-  #combined_df <- cbind(expression_vec, cov_df)
-  expr_resid <- summary(lm(expression_vec ~ ., data=combined_df_final))$residuals
-  expr_resid <- scale(expr_resid, center = TRUE, scale = TRUE)
+  expr_resid <- combined_df_final$expression_vec
   expr_resid
 }
 

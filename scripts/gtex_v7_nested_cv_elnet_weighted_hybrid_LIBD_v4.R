@@ -128,7 +128,7 @@ adjust_for_covariates <- function(expression_vec, cov_df) {
   colnames(expression_vec_gtex_df) <- 'expression_vec'
   rownames(expression_vec_gtex_df) <- expression_vec_gtex_names
   expression_vec_combined_df <- rbind(expression_vec_gtex_df, expr_resid_libd_df)
-  expression_vec_combined_df_final <- scale(expression_vecx_combined_df$expression_vec, 
+  expression_vec_combined_df_final <- scale(expression_vec_combined_df$expression_vec, 
                                             center = TRUE, scale = TRUE)
   rownames(expression_vec_combined_df_final) <- rownames(expression_vec_combined_df)
   

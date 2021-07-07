@@ -6,8 +6,7 @@
 
 #Takes args from wrapper scripts in repo
 argv <- commandArgs(trailingOnly = TRUE)
-source('./scripts/gtex_v7_nested_cv_elnet_weighted_hybrid_LIBD.R')
-#source('./scripts/gtex_v7_nested_cv_elnet_weighted_hybrid_LIBD_v4.R')
+source('./scripts/gtex_v7_nested_cv_elnet_weighted_hybrid_LIBD_study.R')
 
 chrom <- argv[1]
 prefix <- argv[2]

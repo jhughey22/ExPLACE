@@ -138,7 +138,7 @@ adjust_for_covariates <- function(expression_vec, cov_df) {
   # colnames(combined_df_final)[[1]] <- 'expression_vec'
   
   #expr_resid <- combined_df_final$expression_vec
-  expr_resid <- expr_resid_r1
+  expr_resid <- expr_resid_r1$expression_vec
   expr_resid
 }
 
